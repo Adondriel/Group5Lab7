@@ -11,6 +11,7 @@ import weapon.Weapon;
  * 
  * @author Dr. Dudley Girard -- first author
  * @author Dr. Alice Armstrong -- revisions
+ * @author Benjamin Uleau
  */ 
 public abstract class LifeForm 
 { 
@@ -166,6 +167,14 @@ public abstract class LifeForm
     	return null; 
     }
     
+    /**
+     * Remove the weapon in case you don't want to drop it
+     */
+    public void removeWeapon(){
+    	if(hasWeapon()){
+    		weapon=null;
+    	}
+    }
     /**
 	 * @return
 	 */
