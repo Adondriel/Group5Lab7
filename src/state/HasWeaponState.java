@@ -28,9 +28,9 @@ public class HasWeaponState extends ActionState
 	{
 		if (alive() == true)
 		{
-			if (target() != null)
+			if (target() == true)
 			{
-				if (checkAmmo() == null)
+				if (checkAmmo() == false)
 				{
 					ai.setState(ai.getOutOfAmmoState());
 				}

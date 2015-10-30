@@ -27,7 +27,7 @@ public class NoWeaponState extends ActionState
 	{
 		if (alive() == true)
 		{
-			if (weaponAtFeet() != null)
+			if (weaponAtFeet() == true)
 			{
 				aquireWeapon();
 			}
