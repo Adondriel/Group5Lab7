@@ -30,6 +30,7 @@ public class NoWeaponState extends ActionState
 			if (weaponAtFeet() == true)
 			{
 				aquireWeapon();
+				ai.setState(ai.getHasWeaponState());
 			}
 			else
 			{
