@@ -73,7 +73,53 @@ public abstract class ActionState
 	 */
 	public boolean target() 
 	{
-		return true;
+		int i = l.getRow();
+		int j = l.getCol();
+		if (l.getDirection() == "north")
+		{
+			while (i>0)
+			{
+				if (e.getLifeForm(i-1, l.getCol()) != null)
+				{
+					return true;
+				}
+				i--;
+			}
+		}
+		else if(l.getDirection() == "south")
+		{
+			while (i<e.getNumRows())
+			{
+				if (e.getLifeForm(i+1, l.getCol()) != null)
+				{
+					return true;
+				}
+				i++;
+			}
+		}
+		else if (l.getDirection() == "east")
+		{
+			while (j>0)
+			{
+				if (e.getLifeForm(l.getRow(), j-1) != null)
+				{
+					return true;
+				}
+				j--;
+			}
+		}
+		else if (l.getDirection() == "west")
+		{
+			while (j<0)
+			{
+				if (e.getLifeForm(l.getRow(), j+1) != null)
+				{
+					return true;
+				}
+				j++;
+			}
+		}
+		return false;
 	}
 	
 	/**
