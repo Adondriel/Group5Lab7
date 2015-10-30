@@ -1,5 +1,9 @@
 package state;
 
+import java.util.Random;
+
+import command.MoveCmd;
+
 import weapon.Weapon;
 import lifeform.LifeForm;
 import environment.Environment;
@@ -70,5 +74,18 @@ public abstract class ActionState
 	public boolean target() 
 	{
 		return true;
+	}
+	
+	/**
+	 * Turns a LifeForm a random direction and then moves.
+	 */
+	public void search() 
+	{
+		String [] direction = {"North", "South", "East", "West"};
+        Random random = new Random();
+        int select = random.nextInt(direction.length);
+		l.setDirection(direction[select]);
+		MoveCmd move = new MoveCmd();
+		move.execute(l.getRow(), l.getCol());
 	}
 }
