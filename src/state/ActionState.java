@@ -21,15 +21,21 @@ public abstract class ActionState
 	 * Remove the lifeform and put its weapon in a random cell
 	 */
 	public void respawn(){
-		Weapon temp=l.getWeapon();
 		int newR=(int) Math.floor(Math.random()*11);
 		int newC=(int) Math.floor(Math.random()*11);
+		if(e.getWeapons(l.getRow(), l.getCol()).length!=2){
+			l.dropWeapon();
+		}
+		else{
+			l.removeWeapon();
+		}
 		l.removeWeapon();
-		while(e.getWeapons(newR, newC).length==2){
+		e.removeLifeForm(l.getRow(), l.getCol());
+		while(e.getLifeForm(newR, newC)==null){
 			newR=(int) Math.floor(Math.random()*11);
 			newC=(int) Math.floor(Math.random()*11);
 		}
-		e.addWeapon(temp, newR, newC);
+		e.addLifeForm(l, newR, newC);
 	}
 
 	/**
