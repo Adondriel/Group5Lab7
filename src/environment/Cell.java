@@ -1,5 +1,4 @@
 package environment;
-import weapon.MockWeapon;
 import weapon.Weapon;
 import lifeform.LifeForm;
 /** 

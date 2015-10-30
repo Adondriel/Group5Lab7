@@ -160,4 +160,6 @@ public abstract class ActionState
 		AttackCmd attack = new AttackCmd();
 		attack.execute(l.getRow(), l.getCol());
 	}
+	
+	public abstract void executeAction();
 }

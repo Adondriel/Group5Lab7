@@ -23,6 +23,7 @@ public class NoWeaponState extends ActionState
 	 * If there is no weapon the LifeForm will turn a random direction and move.
 	 * If dead moves to the DeadState.
 	 */
+	@Override
 	public void executeAction()
 	{
 		if (alive() == true)

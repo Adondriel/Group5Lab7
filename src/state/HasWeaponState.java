@@ -24,6 +24,7 @@ public class HasWeaponState extends ActionState
 	 * to OutOFAmmoState. If no target the LifeForm will turn a random direction 
 	 * and move.  If dead moves to the DeadState.
 	 */
+	@Override
 	public void executeAction()
 	{
 		if (alive() == true)
