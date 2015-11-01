@@ -2,6 +2,10 @@ package state;
 
 import gameplay.TimerObserver;
 
+/**
+ * @author Adam Pine, Benjamin Uleau
+ *
+ */
 public class AIContext implements TimerObserver{
 	private ActionState deadState = new DeadState(this);
 	private ActionState hasWeapon = new HasWeaponState(this);
@@ -33,5 +37,7 @@ public class AIContext implements TimerObserver{
 		currentState = state;		
 	}
 	
-	
+	public ActionState getCurrentState(){
+		return currentState;
+	}
 }

@@ -21,5 +21,6 @@ public class DeadState extends ActionState
 	@Override
 	public void executeAction(){
 		respawn();
+		ai.setState(ai.getNoWeaponState());
 	}
 }

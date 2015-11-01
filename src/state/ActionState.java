@@ -36,6 +36,7 @@ public abstract class ActionState
 			newC=(int) Math.floor(Math.random()*11);
 		}
 		e.addLifeForm(l, newR, newC);
+		
 	}
 
 	/**
