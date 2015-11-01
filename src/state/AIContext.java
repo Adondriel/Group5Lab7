@@ -1,5 +1,6 @@
 package state;
 
+import lifeform.LifeForm;
 import gameplay.TimerObserver;
 
 /**
@@ -13,7 +14,11 @@ public class AIContext implements TimerObserver{
 	private ActionState outOfAmmo = new OutOfAmmoState(this);
 	private int myTime = 0;
 	private ActionState currentState = noWeapon;
+	LifeForm l;
 	
+	public AIContext(LifeForm l){
+		this.l=l;
+	}
 	@Override
 	public void updateTime(int time) {
 		myTime = time;

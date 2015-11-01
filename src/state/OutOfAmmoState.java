@@ -20,7 +20,7 @@ public class OutOfAmmoState extends ActionState
 	 */
 	@Override
 	public void executeAction(){
-		l.getWeapon().reload();
+		ai.l.getWeapon().reload();
 		ai.setState(ai.getHasWeaponState());
 	}
 }

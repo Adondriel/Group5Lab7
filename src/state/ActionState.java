@@ -12,30 +12,43 @@ import environment.Environment;
  * @author Benjamin Uleau, Jason LoBianco
  *
  */
-public abstract class ActionState 
+public abstract class ActionState
 {
-	Environment e=Environment.getEnvironment(10, 10);
-	LifeForm l;
+	int maxRow=10;
+	int maxCol=10;
+	Environment e=Environment.getEnvironment(maxRow, maxCol);
+	//LifeForm l;
+	AIContext ai;
+	
+	/**
+	 * @param l lifeform
+	 */
+	/*public ActionState(LifeForm l){
+		this.l=l;
+	}*/
 	
 	/**
 	 * Remove the lifeform and put its weapon in a random cell
 	 */
 	public void respawn(){
-		int newR=(int) Math.floor(Math.random()*11);
-		int newC=(int) Math.floor(Math.random()*11);
-		if(e.getWeapons(l.getRow(), l.getCol()).length!=2){
-			l.dropWeapon();
+		int newR=(int) Math.floor(Math.random()*maxRow+1);
+		int newC=(int) Math.floor(Math.random()*maxCol+1);
+		Weapon temp;
+		if(ai.l.hasWeapon()){
+			temp=ai.l.getWeapon();
+			ai.l.removeWeapon();
+			while(e.getWeapons(newR, newC).length==2){
+				newR=(int) Math.floor(Math.random()*maxRow+1);
+				newC=(int) Math.floor(Math.random()*maxCol+1);
+			}
+			e.addWeapon(temp, newR, newC);
 		}
-		else{
-			l.removeWeapon();
+		e.removeLifeForm(ai.l.getRow(), ai.l.getCol());
+		while(e.getLifeForm(newR, newC)!=null){
+			newR=(int) Math.floor(Math.random()*maxRow+1);
+			newC=(int) Math.floor(Math.random()*maxCol+1);
 		}
-		l.removeWeapon();
-		e.removeLifeForm(l.getRow(), l.getCol());
-		while(e.getLifeForm(newR, newC)==null){
-			newR=(int) Math.floor(Math.random()*11);
-			newC=(int) Math.floor(Math.random()*11);
-		}
-		e.addLifeForm(l, newR, newC);
+		e.addLifeForm(ai.l, newR, newC);
 		
 	}
 
@@ -44,7 +57,7 @@ public abstract class ActionState
 	 */
 	public boolean weaponAtFeet() 
 	{
-		if (e.getWeapons(l.getRow(), l.getCol()) != null)
+		if (e.getWeapons(ai.l.getRow(), ai.l.getCol()) != null)
 		{
 			return true;
 		}
@@ -56,7 +69,7 @@ public abstract class ActionState
 	 */
 	public boolean alive() 
 	{
-		if (l.getCurrentLifePoints() == 0)
+		if (ai.l.getCurrentLifePoints() == 0)
 		{
 		return false;
 		}
@@ -68,7 +81,7 @@ public abstract class ActionState
 	 */
 	public boolean checkAmmo() 
 	{
-		if (l.getWeapon().getCurrentAmmo() == 0)
+		if (ai.l.getWeapon().getCurrentAmmo() == 0)
 		{
 			return false;
 		}
@@ -80,46 +93,46 @@ public abstract class ActionState
 	 */
 	public boolean target() 
 	{
-		int i = l.getRow();
-		int j = l.getCol();
-		if (l.getDirection() == "North")
+		int i = ai.l.getRow();
+		int j = ai.l.getCol();
+		if (ai.l.getDirection() == "North")
 		{
 			while (i>0)
 			{
-				if (e.getLifeForm(i-1, l.getCol()) != null)
+				if (e.getLifeForm(i-1, ai.l.getCol()) != null)
 				{
 					return true;
 				}
 				i--;
 			}
 		}
-		else if(l.getDirection() == "South")
+		else if(ai.l.getDirection() == "South")
 		{
 			while (i<e.getNumRows())
 			{
-				if (e.getLifeForm(i+1, l.getCol()) != null)
+				if (e.getLifeForm(i+1, ai.l.getCol()) != null)
 				{
 					return true;
 				}
 				i++;
 			}
 		}
-		else if (l.getDirection() == "East")
+		else if (ai.l.getDirection() == "East")
 		{
 			while (j>0)
 			{
-				if (e.getLifeForm(l.getRow(), j-1) != null)
+				if (e.getLifeForm(ai.l.getRow(), j-1) != null)
 				{
 					return true;
 				}
 				j--;
 			}
 		}
-		else if (l.getDirection() == "West")
+		else if (ai.l.getDirection() == "West")
 		{
 			while (j<0)
 			{
-				if (e.getLifeForm(l.getRow(), j+1) != null)
+				if (e.getLifeForm(ai.l.getRow(), j+1) != null)
 				{
 					return true;
 				}
@@ -137,9 +150,9 @@ public abstract class ActionState
 		String [] direction = {"North", "South", "East", "West"};
         Random random = new Random();
         int select = random.nextInt(direction.length);
-		l.setDirection(direction[select]);
+		ai.l.setDirection(direction[select]);
 		MoveCmd move = new MoveCmd();
-		move.execute(l.getRow(), l.getCol());
+		move.execute(ai.l.getRow(), ai.l.getCol());
 	}
 	
 	/**
@@ -147,9 +160,9 @@ public abstract class ActionState
 	 */
 	public void aquireWeapon() 
 	{
-		int wepRow = l.getRow();
-		int wepCol = l.getCol();
-		l.pickUpWeapon(e.getWeapons(wepRow, wepCol)[0]);
+		int wepRow = ai.l.getRow();
+		int wepCol = ai.l.getCol();
+		ai.l.pickUpWeapon(e.getWeapons(wepRow, wepCol)[0]);
 		e.removeWeapon(e.getWeapons(wepRow, wepCol)[0], wepRow, wepCol);
 	}
 	
@@ -159,7 +172,11 @@ public abstract class ActionState
 	public void attackTarget() 
 	{
 		AttackCmd attack = new AttackCmd();
-		attack.execute(l.getRow(), l.getCol());
+		attack.execute(ai.l.getRow(), ai.l.getCol());
+	}
+	
+	public LifeForm getLifeForm(){
+		return ai.l;
 	}
 	
 	public abstract void executeAction();
