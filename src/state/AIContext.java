@@ -85,4 +85,11 @@ public class AIContext implements TimerObserver{
 	public void executeAction(){
 		currentState.executeAction();
 	}
+	
+	/**
+	 * @return the AIContext's lifeform
+	 */
+	public LifeForm getLifeForm(){
+		return l;
+	}
 }
