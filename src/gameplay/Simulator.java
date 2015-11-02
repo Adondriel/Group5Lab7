@@ -34,19 +34,19 @@ public class Simulator implements TimerObserver
 	private SimpleTimer timer =  new SimpleTimer();
 	
 	RecoveryBehavior[] recoveryArray = new RecoveryBehavior[3];
-	recoveryArray[0] = RecoveryNone;
-	recoveryArray[1] = RecoveryFractional;
-	recoveryArray[2] = RecoveryLinear;
+	recoveryArray[0] = new RecoveryNone();
+	recoveryArray[1] = new RecoveryFractional();
+	recoveryArray[2] = new RecoveryLinear();
 	
 	Weapon[] armory = new Weapon[3];
-	armory[0] = Pistol;
-	armory[1] = ChainGun;
-	armory[2] = PlasmaCannon;
+	armory[0] = new Pistol();
+	armory[1] = new ChainGun();
+	armory[2] = new PlasmaCannon();
 	
 	Attachment[] armoryMods = new Attachment[3];
-	armoryMods[0] = PowerBooster;
-	armoryMods[1] = Scope;
-	armoryMods[2] = Stabilizer;	
+	armoryMods[0] = new PowerBooster();
+	armoryMods[1] = new Scope();
+	armoryMods[2] = new Stabilizer();	
 	
 	/**
 	 * constructor gets the
