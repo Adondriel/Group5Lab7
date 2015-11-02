@@ -494,4 +494,13 @@ public class Environment {
 			ob.updateCell(row, col, cell.getLifeForm(), cell.getWeapon1(), cell.getWeapon2());		
 		}
 	}
+	
+	/**
+	 * @param row
+	 * @param col
+	 * @return the cell at row, col
+	 */
+	public Cell getCell(int row, int col){
+		return cells[row][col];
+	}
 }

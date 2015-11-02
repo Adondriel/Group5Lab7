@@ -309,4 +309,10 @@ public abstract class LifeForm
 		}
 	}
 
+	/**
+	 * set current lifepoints to max lifepoints
+	 */
+	public void refillLife(){
+		currentLifePoints=maxLifePoints;
+	}
 }
