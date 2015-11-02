@@ -1,5 +1,9 @@
 package state;
 
+import java.util.Random;
+
+import command.MoveCmd;
+
 /**
  * Provides functionality to the AI when in NoWeaponState.
  * @author Jason LoBianco
@@ -43,4 +47,52 @@ public class NoWeaponState extends ActionState
 			ai.setState(ai.getDeadState());
 		}
 	}
+	
+	/**
+	 * @return false if the current life points of a LifeForm is 0.
+	 */
+	private boolean alive() 
+	{
+		if (ai.l.getCurrentLifePoints() == 0)
+		{
+		return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @return true if there is a weapon in the same row and column as a LifeForm.
+	 */
+	private boolean weaponAtFeet() 
+	{
+		if (e.getWeapons(ai.l.getRow(), ai.l.getCol())[0] != null || e.getWeapons(ai.l.getRow(), ai.l.getCol())[1] != null)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Turns a LifeForm a random direction and then moves.
+	 */
+	private void search() 
+	{
+		String [] direction = {"North", "South", "East", "West"};
+        int random = (int)(Math.random()*4);
+		ai.l.setDirection(direction[random]);
+		MoveCmd move = new MoveCmd();
+		move.execute(ai.l.getRow(), ai.l.getCol());
+	}
+	
+	/**
+	 * Picks up a weapon from the environment for a LifeForm.
+	 */
+	private void aquireWeapon() 
+	{
+		int wepRow = ai.l.getRow();
+		int wepCol = ai.l.getCol();
+		ai.l.pickUpWeapon(e.getWeapons(wepRow, wepCol)[0]);
+		e.removeWeapon(e.getWeapons(wepRow, wepCol)[0], wepRow, wepCol);
+	}
+	
 }

@@ -10,10 +10,10 @@ import gameplay.TimerObserver;
 public class AIContext implements TimerObserver{
 	private ActionState deadState = new DeadState(this);
 	private ActionState hasWeapon = new HasWeaponState(this);
-	private ActionState noWeapon = new NoWeaponState(this);
+	public ActionState noWeapon = new NoWeaponState(this);
 	private ActionState outOfAmmo = new OutOfAmmoState(this);
 	private int myTime = 0;
-	private ActionState currentState = noWeapon;
+	public ActionState currentState = noWeapon;
 	LifeForm l;
 	
 	/**
