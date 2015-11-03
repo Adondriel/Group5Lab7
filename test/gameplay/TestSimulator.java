@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import exceptions.AttachmentException;
 import exceptions.RecoveryRateException;
 import exceptions.WeaponException;
 import lifeform.Alien;
@@ -40,32 +41,43 @@ public class TestSimulator
 	 * 1 human(randomized) and 1 Alien(randomized)
 	 * 2 weapons(randomized) w or w/o attachments
 	 * @throws RecoveryRateException 
+	 * @throws AttachmentException 
 	 */
 	@Test
-	public void testSimulatorInitializer() throws RecoveryRateException
+	public void testSimulatorInitializer() throws RecoveryRateException, AttachmentException
 	{
-		
-		/*RecoveryBehavior none = new RecoveryNone();
-		Human john = new Human("John", 100, 50);
-		Alien zork = new Alien("Zork", 100, none, 0);
-		Weapon plasma = new PlasmaCannon();
-		Weapon pistol = new Pistol(); */
-		
 		int numberOfAliens = 1;
 		int numberOfHumans = 1;
 		
 		Simulator matrix = new Simulator(numberOfHumans, numberOfAliens);
 		assertEquals(1, matrix.getNumberOfAlien());
 		assertEquals(1, matrix.getNumberOfHuman());
+		assertEquals(2, matrix.getNumberOfWeapons());
+	}
+	
+	/**
+	 * test populates the world with more than one alien and human
+	 * to properly test the randomization
+	 * @throws RecoveryRateException
+	 * @throws AttachmentException
+	 */
+	@Test
+	public void testSimulatorInitializer2() throws RecoveryRateException, AttachmentException
+	{
+		int numberOfAliens = 10;
+		int numberOfHumans = 10;
 		
-			
+		Simulator matrix = new Simulator(numberOfHumans, numberOfAliens);
+		assertEquals(10, matrix.getNumberOfAlien());
+		assertEquals(10, matrix.getNumberOfHuman());
+		assertEquals(20, matrix.getNumberOfWeapons());
 	}
 	
 	/**
 	 * test updateAI updates
 	 * all the AIContexts
 	 */
-	@Test
+	/*@Test
 	public void testSimulatorUpdateAI()
 	{
 		fail("Not yet implemented");
@@ -74,11 +86,11 @@ public class TestSimulator
 	/**
 	 * test that a time update
 	 * triggers updateAI
-	 */
+	 
 	@Test
 	public void testSimulatorTimeUpdate()
 	{
 		fail("Not yet implemented");
-	}
+	} */
 
 }

@@ -2,6 +2,9 @@ package state;
 
 import java.util.Random;
 
+import lifeform.Alien;
+import lifeform.Human;
+import lifeform.LifeForm;
 import command.AttackCmd;
 import command.MoveCmd;
 
@@ -11,6 +14,8 @@ import command.MoveCmd;
  */
 public class HasWeaponState extends ActionState
 {
+	private int canMove = 0;
+	private LifeForm target;
 	AIContext ai;
 	
 	/**
@@ -73,12 +78,22 @@ public class HasWeaponState extends ActionState
 	 */
 	private void search() 
 	{
+		String oldDirection = ai.l.getDirection();
 		String [] direction = {"North", "South", "East", "West"};
-        Random random = new Random();
-        int select = random.nextInt(direction.length);
-		ai.l.setDirection(direction[select]);
-		MoveCmd move = new MoveCmd();
-		move.execute(ai.l.getRow(), ai.l.getCol());
+        int random = (int)(Math.random()*4);
+		ai.l.setDirection(direction[random]);
+		if (oldDirection == ai.l.getDirection())
+		{
+			search();
+		}
+		canMove++;
+		if (canMove == 2)
+		{
+			MoveCmd move = new MoveCmd();
+			move.execute(ai.l.getRow(), ai.l.getCol());
+			canMove = 0;
+		}
+		
 	}
 
 	/**
@@ -106,6 +121,7 @@ public class HasWeaponState extends ActionState
 			{
 				if (e.getLifeForm(i-1, ai.l.getCol()) != null)
 				{
+					target = e.getLifeForm(i-1, ai.l.getCol());
 					return true;
 				}
 				i--;
@@ -117,6 +133,7 @@ public class HasWeaponState extends ActionState
 			{
 				if (e.getLifeForm(i+1, ai.l.getCol()) != null)
 				{
+					target = e.getLifeForm(i+1, ai.l.getCol());
 					return true;
 				}
 				i++;
@@ -128,6 +145,7 @@ public class HasWeaponState extends ActionState
 			{
 				if (e.getLifeForm(ai.l.getRow(), j-1) != null)
 				{
+					target = e.getLifeForm(ai.l.getRow(), j-1);
 					return true;
 				}
 				j--;
@@ -139,6 +157,7 @@ public class HasWeaponState extends ActionState
 			{
 				if (e.getLifeForm(ai.l.getRow(), j+1) != null)
 				{
+					target = e.getLifeForm(ai.l.getRow(), j+1);
 					return true;
 				}
 				j++;
@@ -153,7 +172,21 @@ public class HasWeaponState extends ActionState
 	private void attackTarget() 
 	{
 		AttackCmd attack = new AttackCmd();
-		attack.execute(ai.l.getRow(), ai.l.getCol());
+		if (ai.getLifeForm() instanceof Human && target instanceof Alien)
+		{
+			attack.execute(ai.l.getRow(), ai.l.getCol());
+		}
+		else if (ai.getLifeForm() instanceof Human && target instanceof Human)
+		{
+			search();
+		}
+		else if (ai.getLifeForm() instanceof Alien && target instanceof Human)
+		{
+			attack.execute(ai.l.getRow(), ai.l.getCol());
+		}
+		else
+		{
+			search();
+		}
 	}
-
 }

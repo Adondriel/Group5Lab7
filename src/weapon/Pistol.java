@@ -71,5 +71,10 @@ public class Pistol extends GenericWeapon {
 		
 		return "Pistol";
 	}
+	
+	public void setCurrentAmmo(int i) 
+	{
+		currentAmmo = i;	
+	}
 
 }
