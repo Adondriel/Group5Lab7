@@ -3,13 +3,21 @@ package gameplay;
 import java.util.LinkedList;
 
 import environment.Environment;
+import exceptions.AttachmentException;
+import exceptions.RecoveryRateException;
 import lifeform.Alien;
 import lifeform.Human;
 import recovery.RecoveryBehavior;
+import recovery.RecoveryFractional;
+import recovery.RecoveryLinear;
+import recovery.RecoveryNone;
 import weapon.Pistol;
 import weapon.Attachment;
 import weapon.ChainGun;
 import weapon.PlasmaCannon;
+import weapon.PowerBooster;
+import weapon.Scope;
+import weapon.Stabilizer;
 import weapon.Weapon;
 
 /**
@@ -33,20 +41,13 @@ public class Simulator implements TimerObserver
 	private Environment e = Environment.getEnvironment(10, 10);
 	private SimpleTimer timer =  new SimpleTimer();
 	
-	RecoveryBehavior[] recoveryArray = new RecoveryBehavior[3];
-	recoveryArray[0] = new RecoveryNone();
-	recoveryArray[1] = new RecoveryFractional();
-	recoveryArray[2] = new RecoveryLinear();
+	LinkedList<Human> humanList = new LinkedList<Human>();
+	LinkedList<Alien> alienList = new LinkedList<Alien>();
+	LinkedList<Weapon> weaponList = new LinkedList<Weapon>();
 	
-	Weapon[] armory = new Weapon[3];
-	armory[0] = new Pistol();
-	armory[1] = new ChainGun();
-	armory[2] = new PlasmaCannon();
-	
-	Attachment[] armoryMods = new Attachment[3];
-	armoryMods[0] = new PowerBooster();
-	armoryMods[1] = new Scope();
-	armoryMods[2] = new Stabilizer();	
+	private RecoveryBehavior[] recoveryArray = new RecoveryBehavior[3];
+	private Weapon[] armory = new Weapon[3];
+	private Attachment[] armoryMods = new Attachment[3];
 	
 	/**
 	 * constructor gets the
@@ -55,13 +56,25 @@ public class Simulator implements TimerObserver
 	 * and creates randomized AI lifeforms
 	 * and random weapons
 	 * placing everything at random cells in Environment
+	 * @throws RecoveryRateException 
+	 * @throws AttachmentException 
 	 */
-	public Simulator(int numberOfHumans, int numberOfAliens)
+	public Simulator(int numberOfHumans, int numberOfAliens) throws RecoveryRateException, AttachmentException
 	{
-		
+	
 		int numberOfWeapons = numberOfHumans + numberOfAliens;
 		
-		LinkedList<Human> humanList = new LinkedList<Human>();
+		recoveryArray[0] = new RecoveryNone();
+		recoveryArray[1] = new RecoveryFractional(0.0);
+		recoveryArray[2] = new RecoveryLinear(0);
+		
+		armory[0] = new Pistol();
+		armory[1] = new ChainGun();
+		armory[2] = new PlasmaCannon();
+		
+		
+		
+		
 		
 			for(int x = 0; x < numberOfHumans; x++)
 			{
@@ -84,13 +97,26 @@ public class Simulator implements TimerObserver
 				e.addLifeForm(element, row, col);
 			}
 		
-		LinkedList<Alien> alienList = new LinkedList<Alien>();
-		
+			
+			double fractionalHeal;
+			int linearHeal;
+			
 			for(int x = 0; x < numberOfAliens; x++)
 			{
 				String alienName = String.format("Alien%2d", x+1); //creats the name Alien0x
-				int recoveryID = 0 + (int)Math.random() * ((2 - 0) + 1); //will find random recovery behavior
-				int recoveryRate = 0 + (int)Math.random() * ((3- 0) + 1); //setting maximum recovery rate to 3 rounds
+				int recoveryID = (int)Math.floor(Math.random() * 3); //will find random recovery behavior based on 0-2
+				int recoveryRate = (int)Math.floor((Math.random() * 3) + 1); //revovery rate from 1-3
+				
+				if (recoveryID == 2) //RecoveryLinear returns 
+				{
+					linearHeal = (int)Math.floor(Math.random() * 6); //setting maximum recovery rate to 5
+					recoveryArray[recoveryID] = new RecoveryLinear(linearHeal);
+				}else
+				if (recoveryID == 1) //RecoveryFractional
+				{
+					fractionalHeal = 0.1 + (Math.random() * (0.2 - 0.1)); //setting maximum Fractional from .1 to .2
+					recoveryArray[recoveryID] = new RecoveryFractional(fractionalHeal);
+				}
 				
 				alienList.add(new Alien(alienName, 150, recoveryArray[recoveryID], recoveryRate));
 			}
@@ -109,23 +135,39 @@ public class Simulator implements TimerObserver
 				e.addLifeForm(element, row, col);
 			}
 			
-		LinkedList<Weapon> weaponList = new LinkedList<Weapon>();
 		
+		/*	armoryMods[0] = new Scope();
+			armoryMods[1] = new Stabillizer();
+			armoryMods[2] = new PowerBooster(); */
 		for(int x = 0; x < numberOfWeapons; x++)
 		{
 			int weaponID = (int) Math.floor(Math.random() * 3); //number 0 - 2 
+			Weapon weapon = armory[weaponID]; //creates the weapon
 			int numberOfAttachments = (int) Math.floor(Math.random() * 3); //how many attachments 0-2
+			//int numberOfAttachments = 1 + (int)(Math.random() * ((2 - 1) + 1));
 
-			Weapon weapon = armory[weaponID];
+			
 			
 			if(numberOfAttachments > 0)
 			{
-				for(int i = 0; x < numberOfAttachments; x++)
+				for(int i = 0; i < numberOfAttachments; i++)
 				{
-					int attachmentID = (int) Math.floor(Math.random() * 3); //which attachment
-					Attachment attachedWeapon = armoryMods[attachmentID];
+					int attachmentID = (int) Math.floor(Math.random() * 3); //which attachment to add 0-2
+					if(attachmentID == 0) //Scope
+					{
+						weapon = new Scope(weapon);
+					}
+					if(attachmentID == 1) //Stabilizer
+					{
+						weapon = new Stabilizer(weapon);
+					}
+					if(attachmentID == 2) //PowerBooster
+					{
+						weapon = new PowerBooster(weapon);
+					}
 				}
 			}
+			
 			weaponList.add(weapon);
 		}
 		
@@ -166,6 +208,12 @@ public class Simulator implements TimerObserver
 	{
 		
 		return humanList.size();
+	}
+
+	public int getNumberOfWeapons()
+	{
+		
+		return weaponList.size();
 	}
 
 }
